@@ -40,6 +40,8 @@ public final class RSAUtils {
 	public final static int MAX_KEY_SIZE = 1024;
 	/** 后缀名*/
 	private final static String SUFFIX = ".xml";
+	/** 加密填充算法 */
+	public final static String RSA = "RSA/ECB/PKCS1Padding";
 	
 	/** 密钥对 */
 	private static Map<String, String> keys = new HashMap<String, String>();
@@ -98,7 +100,7 @@ public final class RSAUtils {
 		RSAPrivateKey key = (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
 
 		// 对数据解密
-		Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+		Cipher cipher = Cipher.getInstance(RSA);
 		cipher.init(Cipher.DECRYPT_MODE, key);
 
 		int length = encryptedData.length;
@@ -145,7 +147,7 @@ public final class RSAUtils {
 		RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(keySpec);
 
 		// 对数据加密
-		Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+		Cipher cipher = Cipher.getInstance(RSA);
 		cipher.init(Cipher.ENCRYPT_MODE, key);
 		int length = data.length;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
