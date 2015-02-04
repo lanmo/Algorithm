@@ -1,6 +1,7 @@
 package com.yn.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -10,18 +11,20 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Copyright (C), nanyang205380@sohu-inc.com.
  * 
  * @ClassName: RSAUtils
- * @Description:RSA加密解密
+ * @Description:RSA加密解密,同时支持ios和android
  * @date 2015年1月28日 上午9:36:30
  */
 public final class RSAUtils {
@@ -239,6 +242,48 @@ public final class RSAUtils {
 		// 保存公钥
 		XMLConfiguration publicConfig = new XMLConfiguration();
 		publicConfig.setProperty(PUBLIC_KEY, publicKey);
+		publicConfig.save(filePath + PUBLIC_KEY + SUFFIX);
+
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)
+	 * @date: 2015年1月28日 上午11:10:42
+	 * @Title: saveKey
+	 * @Description: 保存密钥对,用mac电脑生成的公钥和密钥对
+	 * @throws:
+	 */
+	public static void saveKeyPem() throws Exception {
+
+		String filePath = RSAUtils.class.getResource("/").toURI().getPath();
+		filePath = filePath.replace("target/classes/", "src/main/java/rsa/");
+		
+		String privatePath = filePath + "pkcs8_private_key.pem";
+		String publicPath = filePath + "rsa_public_key.pem";
+		// 获取私钥
+		File privateFile = new File(privatePath);
+		List<String> privateKeys = FileUtils.readLines(privateFile);
+		StringBuffer privateKey = new StringBuffer();
+		for(int i=1; i<privateKeys.size()-1;i++) {
+			privateKey.append(privateKeys.get(i));
+		}
+		
+		// 获取公钥
+		File publicFile = new File(publicPath);
+		List<String> publicKeys = FileUtils.readLines(publicFile);
+		StringBuffer publicKey = new StringBuffer();
+		for(int i=1; i<publicKeys.size()-1;i++) {
+			publicKey.append(publicKeys.get(i));
+		}
+		
+		// 保存私钥
+		XMLConfiguration privateConfig = new XMLConfiguration();
+		privateConfig.setProperty(PRIVATE_KEY, privateKey.toString());
+		privateConfig.save(filePath + PRIVATE_KEY + SUFFIX);
+
+		// 保存公钥
+		XMLConfiguration publicConfig = new XMLConfiguration();
+		publicConfig.setProperty(PUBLIC_KEY, publicKey.toString());
 		publicConfig.save(filePath + PUBLIC_KEY + SUFFIX);
 
 	}
