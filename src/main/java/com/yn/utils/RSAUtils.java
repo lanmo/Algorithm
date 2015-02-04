@@ -24,7 +24,7 @@ import org.apache.commons.io.FileUtils;
  * Copyright (C), nanyang205380@sohu-inc.com.
  * 
  * @ClassName: RSAUtils
- * @Description:RSA加密解密,同时支持ios和android
+ * @Description:RSA加密解密
  * @date 2015年1月28日 上午9:36:30
  */
 public final class RSAUtils {
@@ -39,16 +39,16 @@ public final class RSAUtils {
 	public final static int MAX_ENCRYPT_BLOCK = 117;
 	/** RSA最大解密密文大小 */
 	public final static int MAX_DECRYPT_BLOCK = 128;
-	/** RSA生成密钥的初始化大小 */
+	/** RSA 密钥长度(1024(单位是位，也就是 bit)，生成的密钥长度就是 1024位 / 8位/字节 = 128字节) */
 	public final static int MAX_KEY_SIZE = 1024;
-	/** 后缀名*/
+	/** 后缀名 */
 	private final static String SUFFIX = ".xml";
-	/** 加密填充算法 */
+	/** 加密/解密填充算法 */
 	public final static String RSA = "RSA/ECB/PKCS1Padding";
-	
+
 	/** 密钥对 */
-	private static Map<String, String> keys = new HashMap<String, String>();
-	
+	private static Map<String, Object> keys = new HashMap<String, Object>();
+
 	static {
 		try {
 			keys = loadKey();
@@ -94,17 +94,12 @@ public final class RSAUtils {
 	 *            私钥(BASE64编码)
 	 * @throws:
 	 */
-	public static byte[] decrypt(byte[] encryptedData)
-			throws Exception {
-		byte[] keyBytes = Base64.decodeBase64(getPrivateKey());
-		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
-		// 获取私钥
-		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-		RSAPrivateKey key = (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
+	public static byte[] decrypt(byte[] encryptedData) throws Exception {
 
+		RSAPrivateKey privateKey = (RSAPrivateKey) keys.get(PRIVATE_KEY);
 		// 对数据解密
 		Cipher cipher = Cipher.getInstance(RSA);
-		cipher.init(Cipher.DECRYPT_MODE, key);
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
 		int length = encryptedData.length;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -141,17 +136,13 @@ public final class RSAUtils {
 	 *            公钥(BASE64编码)
 	 * @throws:
 	 */
-	public static byte[] encrypt(byte[] data)
-			throws Exception {
-		byte[] keyBytes = Base64.decodeBase64(getPublicKey());
-		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-		// 获取公钥
-		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-		RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(keySpec);
+	public static byte[] encrypt(byte[] data) throws Exception {
 
+		RSAPublicKey publicKey = (RSAPublicKey) keys.get(PUBLIC_KEY);
 		// 对数据加密
 		Cipher cipher = Cipher.getInstance(RSA);
-		cipher.init(Cipher.ENCRYPT_MODE, key);
+		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
 		int length = data.length;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		int offSet = 0;
@@ -159,7 +150,7 @@ public final class RSAUtils {
 		int i = 0;
 		// 分段加密,加密的最大值为117
 		while (length - offSet > 0) {
-			if (length - offSet > MAX_DECRYPT_BLOCK) {
+			if (length - offSet > MAX_ENCRYPT_BLOCK) {
 				cache = cipher.doFinal(data, offSet, MAX_ENCRYPT_BLOCK);
 			} else {
 				cache = cipher.doFinal(data, offSet, length - offSet);
@@ -186,17 +177,6 @@ public final class RSAUtils {
 		RSAPrivateKey privateKey = (RSAPrivateKey) keyMap.get(PRIVATE_KEY);
 		return Base64.encodeBase64String(privateKey.getEncoded());
 	}
-	
-	/**
-	 * @author: YangNan(杨楠)
-	 * @date: 2015年1月28日 上午10:34:04
-	 * @Title: getPrivateKey
-	 * @Description: 获取私钥,返回base64编码的字符串
-	 * @param keyMap
-	 */
-	public static String getPrivateKey() {
-		return keys.get(PRIVATE_KEY);
-	}
 
 	/**
 	 * @author: YangNan(杨楠)
@@ -208,17 +188,6 @@ public final class RSAUtils {
 	public static String getPublicKey(Map<String, Object> keyMap) {
 		RSAPublicKey publicKey = (RSAPublicKey) keyMap.get(PUBLIC_KEY);
 		return Base64.encodeBase64String(publicKey.getEncoded());
-	}
-	
-	/**
-	 * @author: YangNan(杨楠)
-	 * @date: 2015年1月28日 上午10:34:04
-	 * @Title: getPrivateKey
-	 * @Description: 获取私钥 返回base64编码的字符串
-	 * @param keyMap
-	 */
-	public static String getPublicKey() {
-		return keys.get(PUBLIC_KEY);
 	}
 
 	/**
@@ -287,50 +256,64 @@ public final class RSAUtils {
 		publicConfig.save(filePath + PUBLIC_KEY + SUFFIX);
 
 	}
-	
+
 	/**
-	 * @author: YangNan(杨楠)  
-	 * @date: 2015年1月28日 上午11:50:01 
-	 * @Title: loadKey   
-	 * @Description: 从文件中获取密钥对   
+	 * @author: YangNan(杨楠)
+	 * @date: 2015年1月28日 上午11:50:01
+	 * @Title: loadKey
+	 * @Description: 从文件中获取密钥对
 	 * @throws:
 	 */
-	public static Map<String, String> loadKey() throws Exception {
+	public static Map<String, Object> loadKey() throws Exception {
+
+		Map<String, Object> key = new HashMap<String, Object>();
 		
-		Map<String, String> key = new HashMap<String, String>();
-		//String filePath = RSAUtils.class.getClassLoader().getResource("").toURI().getPath();
-		String filePath  = "rsa/";
+		String filePath = "rsa/";
+		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+
 		// 获取私钥
-		XMLConfiguration privateConfig = new XMLConfiguration(filePath + PRIVATE_KEY + SUFFIX);
-		key.put(PRIVATE_KEY, privateConfig.getString(PRIVATE_KEY));
+		XMLConfiguration privateConfig = new XMLConfiguration(filePath	+ PRIVATE_KEY + SUFFIX);
+		byte[] privateKeyBytes = Base64.decodeBase64(privateConfig.getString(PRIVATE_KEY));
+		PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+		RSAPrivateKey privatekey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
+		key.put(PRIVATE_KEY, privatekey);
 
 		// 获取公钥
 		XMLConfiguration publicConfig = new XMLConfiguration(filePath + PUBLIC_KEY + SUFFIX);
-		key.put(PUBLIC_KEY, publicConfig.getString(PUBLIC_KEY));
-		
+		byte[] publicKeyBytes = Base64.decodeBase64(publicConfig.getString(PUBLIC_KEY));
+		X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
+		RSAPublicKey publickey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+		key.put(PUBLIC_KEY, publickey);
+
 		return key;
 	}
-
+	
 	public static void main(String[] args) throws Exception {
+		
+		System.out.println("base64");
+		String abc = Base64.encodeBase64String("123".getBytes());
+		System.out.println(abc);
 
-		 String privateKey = getPrivateKey();
-		 String publicKey = getPublicKey();
+		// 加密
+		final byte[] data = ("0682d44382f05b45309932cbc3ea54b5058053ae|1422869886373")
+				.getBytes();
+
+		long start = System.currentTimeMillis();
+		byte[] encryptData = encrypt(data);
+		System.out.println(encryptData.length);
+		System.out.println("耗时:" + (System.currentTimeMillis() - start));
+		String encode = Base64.encodeBase64String(encryptData);
+		System.out.println("加密数据:" + encode);
+
+		start = System.currentTimeMillis();
 		
-		 System.out.println("公钥:" + publicKey);
-		 System.out.println("私钥:" + privateKey);
+		encode = "K3ZsckkI4u775H+JP/kDaYa/e/ZHSrh5SDLzRsYEgK72HHPF1+/Cx7bCFdELkmPKoPxVyuSohFsgTLcRhiFXPOniis6GwiVhtGRszXywjZSJhWtz79YvVSy+XZzCxJLWrTY1ZrjB5DfZ2oVEzvs9eO2OzLSjZZMpa65/JYLwgM4=";
 		
-		 //加密
-		 byte[] data = ("66555 | " + System.currentTimeMillis()).getBytes();
-		 long start = System.currentTimeMillis();
-		 byte[] encryptData = encrypt(data);
-		 System.out.println("耗时:"+(System.currentTimeMillis() - start));
-		 String encode = Base64.encodeBase64String(encryptData);
-		 System.out.println("加密数据:"+encode);
-		 start = System.currentTimeMillis();
-		 //解密
-		 byte[] decryptData = decrypt(Base64.decodeBase64(encode));
-		 System.out.println("耗时:"+(System.currentTimeMillis() - start));
-		 System.out.println("解密数据:"+new String(decryptData));
+		// //解密
+		byte[] decryptData = decrypt(Base64.decodeBase64(encode.getBytes()));
+		System.out.println("耗时:" + (System.currentTimeMillis() - start));
+		System.out.println("解密数据:" + new String(decryptData, "UTF-8"));
+		
 	}
 
 }
