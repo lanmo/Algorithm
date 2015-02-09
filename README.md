@@ -1,4 +1,8 @@
 # Algorithm
 常用算法集合,方便日后使用的时候到这来找,java项目  
 **rsa加密算法:**  
-  http://witcheryne.iteye.com/blog/2171850 支持java,ios,android
+  http://witcheryne.iteye.com/blog/2171850 支持java,ios,android  
+
+**排序算法:**
+* 选择排序  
+1. 基本思想:比如在一个长度为N的无序数组中，在第一趟遍历N个数据，找出其中最小的数值与第一个元素交换，第二趟遍历剩下的N-1个数据，找出其中最小的数值与第二个元素交换......第N-1趟遍历剩下的2个数据，找出其中最小的数值与第N-1个元素交换，至此选择排序完成.
