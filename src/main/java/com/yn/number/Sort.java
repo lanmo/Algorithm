@@ -3,8 +3,6 @@ package com.yn.number;
 import java.util.Arrays;
 import java.util.Random;
 
-import org.apache.commons.lang.ArrayUtils;
-
 /**
  * Copyright (C), nanyang205380@sohu-inc.com.
  * @ClassName: Sort   
