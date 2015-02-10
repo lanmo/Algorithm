@@ -11,7 +11,7 @@ import java.math.BigInteger;
  * @author YangNan(杨楠)
  * @date 2015年2月9日 下午5:19:15 
  */
-public class Multiply {
+public class BigNumber {
 	public static void main(String[] args) {
 //		String number1 = "96234623984325352868629323412456451245451215645";
 //		String number2 = "934593826459982136492361231242342332342353223123498";
@@ -20,11 +20,16 @@ public class Multiply {
 //		BigDecimal b2 = new BigDecimal(new BigInteger(number2));
 //		System.out.println("api");
 //		System.out.println("大数相乘结果:" + b1.multiply(b2));
-		long start = System.currentTimeMillis();
-		String r = factorial(10000);
-		System.out.println("耗时:"+(System.currentTimeMillis() - start));
-//		long a = dd(10);
+//		long start = System.currentTimeMillis();
+		String r = factorial(100);
+//		System.out.println("耗时:"+(System.currentTimeMillis() - start));
+////		long a = fun(10);
 		System.out.println("阶乘:"+r);
+		
+		long r1 = power(2, 20);
+		System.out.println("幂运算:" + r1);
+		powerBigNumber(2, 64);
+		
 	}
 	
 	/**
@@ -96,9 +101,39 @@ public class Multiply {
 		return c;
 	}
 	
-	public static long dd(int number) {
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: fun   
+	 * @Description: 小数的阶乘   
+	 */
+	public static long fun(int number) {
 		if(number == 1) return 1;
-		return number * dd(number-1);
+		return number * fun(number-1);
 	}
 	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: power   
+	 * @Description: 小数幂运算   
+	 */
+	public static long power(int low, int index) {
+		if(index == 0) return 1;
+		
+		return low * power(low, index-1);
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: powerBigNumber   
+	 * @Description: 大数幂运算   
+	 */
+	public static String powerBigNumber(int low, int index) {
+		
+		String c = String.valueOf(low);
+		for(int i=1; i<index; ++i) {
+			c = multiply(c, String.valueOf(low));
+		}
+		System.out.println("大数幂:" + c);
+		return c;
+	}
 }
