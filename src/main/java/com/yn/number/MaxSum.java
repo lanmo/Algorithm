@@ -1,9 +1,10 @@
 package com.yn.number;
 
+
 /**
  * Copyright (C), nanyang205380@sohu-inc.com.
  * @ClassName: MaxSum   
- * @Description: 计算数组中子数组之和的最大值
+ * @Description: 一维计算数组中子数组之和的最大值
  * @author YangNan(杨楠)
  * @date 2015年3月23日 上午11:01:04 
  */
@@ -11,7 +12,7 @@ public class MaxSum {
 	public static void main(String[] args) {
 		int[] arrays = {1,-2,3,5,-3,2};//8
 		arrays = new int[]{0,-2,3,5,-1,2};//9
-		arrays = new int[]{-9,-2,-3,-5,-3};//-2
+//		arrays = new int[]{-9,-2,-3,-5,-1};//-2
 		System.out.println(maxSum(arrays,arrays.length));
 		System.out.println(maxSum2(arrays, arrays.length));
 	}
@@ -19,7 +20,7 @@ public class MaxSum {
 	/**
 	 * @author: YangNan(杨楠)  
 	 * @Title: maxSum   
-	 * @Description: 时间复杂度O(N2)   
+	 * @Description: 时间复杂度O(N的平方)   
 	 */
 	public static int maxSum(final int[] arrays, int n) {
 		int max = Integer.MIN_VALUE;
