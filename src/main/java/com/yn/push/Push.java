@@ -16,7 +16,7 @@ import org.json.JSONException;
  */
 public class Push {
 	public static void main(String[] args) throws JSONException {
-		String pushToken = "56e95e4eaddece3325cf3b36bff6d4650de957dd60a13d7c69e95a279702a34b";
+		String pushToken = "56e95e4eaddece3325cf3b36bff6d4650de957dd60a13d7c69e95a279702a34a";
 		PushNotificationPayload payload = new PushNotificationPayload();
 		payload.setExpiry(10);
 		payload.addBadge(1);
