@@ -141,20 +141,27 @@ public class Sort {
 	public static void buildMaxHeapify(final int[] arrays) {
 		//没有子节点的才需要创建最大堆，从最后一个的父节点开始
 		int startIndex = getParentIndex(arrays.length - 1);
+		int[] data = new int[arrays.length];
+		for(int i=0; i<data.length; ++i) {
+			data[i] = arrays[i];
+		}
 		//从尾端开始创建最大堆，每次都是正确的堆
 		for(int i=startIndex; i>=0; --i) {
-			maxHeapify(arrays, arrays.length, i);
+			maxHeapNoDigui(arrays, arrays.length, i);
+			maxHeapDigui(data, data.length, i);
 		}
 		System.out.println("堆:" + Arrays.toString(arrays));
+		System.out.println("堆:" + Arrays.toString(data));
+		System.out.println(data == arrays);
 	}
 	
 	/**
 	 * @author: YangNan(杨楠)  
 	 * @Title: maxHeapify   
-	 * @Description: heapSize需要创建最大堆的大小，一般在sort的时候用到，因为最大值放在末尾，末尾就不再归入最大堆了
+	 * @Description: heapSize需要创建最大堆的大小,递归做法
 	 * index当前需要创建最大堆的位置
 	 */
-	public static void maxHeapify(final int[] arrays, int heapSize, int index) {
+	public static void maxHeapDigui(final int[] arrays, int heapSize, int index) {
 		// 当前点与左右子节点比较
 		int left = getChildLeftIndex(index);
 		int right = getChildRightIndex(index);
@@ -170,7 +177,34 @@ public class Sort {
 			int temp = arrays[largest];
 			arrays[largest] = arrays[index];
 			arrays[index] = temp;
-			maxHeapify(arrays, heapSize, largest);
+			maxHeapDigui(arrays, heapSize, largest);
+		}
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: maxHeapNoDigui   每个元素data[i],父节点data[i/2]，左叶子节点data[i*2 + 1];右叶子节点data[i*2 + 2];非递归做法
+	 * 大顶堆
+	 */
+	public static void maxHeapNoDigui(final int[] data, int heapSize, int index) {
+		int startIndex = index;//父节点
+		int left = 0;//左叶子节点
+		while(startIndex < heapSize) {
+			left = 2 * startIndex + 1;
+			if (left >= heapSize) 
+				break;
+			if((left < heapSize-1) && (data[left + 1] > data[left])) {
+				//如果右叶子节点>左叶子节点
+				left = left + 1;
+			}
+			if(data[left] > data[startIndex]) {
+				int temp = data[startIndex];
+				data[startIndex] = data[left];
+				data[left] = temp;
+				startIndex = left;
+			} else {
+				break;
+			}
 		}
 	}
 	
@@ -186,7 +220,8 @@ public class Sort {
 			int temp = arrays[0];
 			arrays[0] = arrays[i];
 			arrays[i] = temp;
-			maxHeapify(arrays, i, 0);
+			maxHeapNoDigui(arrays, i, 0);
+//			maxHeapDigui(arrays, i, 0);
 		}
 		System.out.println("堆排序:" + Arrays.toString(arrays));
 	}
