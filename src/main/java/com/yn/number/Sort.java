@@ -22,6 +22,9 @@ public class Sort {
 		System.out.println("快速排序:" + Arrays.toString(arrays));
 		insertionSort(arrays);
 		selectSort(arrays);
+		
+		buildMaxHeapify(arrays);
+		heapSort(arrays);
 	}
 	
 	/**
@@ -127,6 +130,92 @@ public class Sort {
 		}
 		
 		System.out.println("选择排序:" + Arrays.toString(arrays));
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: buildMaxHeapify   
+	 * @Description: 建立大顶堆(或者小顶堆)  
+	 * 一般都用数组来表示堆，i结点的父结点下标就为(i – 1) / 2。它的左右子结点下标分别为2 * i + 1和2 * i + 2。如第0个结点左右子结点下标分别为1和2。 
+	 */
+	public static void buildMaxHeapify(final int[] arrays) {
+		//没有子节点的才需要创建最大堆，从最后一个的父节点开始
+		int startIndex = getParentIndex(arrays.length - 1);
+		//从尾端开始创建最大堆，每次都是正确的堆
+		for(int i=startIndex; i>=0; --i) {
+			maxHeapify(arrays, arrays.length, i);
+		}
+		System.out.println("堆:" + Arrays.toString(arrays));
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: maxHeapify   
+	 * @Description: heapSize需要创建最大堆的大小，一般在sort的时候用到，因为最大值放在末尾，末尾就不再归入最大堆了
+	 * index当前需要创建最大堆的位置
+	 */
+	public static void maxHeapify(final int[] arrays, int heapSize, int index) {
+		// 当前点与左右子节点比较
+		int left = getChildLeftIndex(index);
+		int right = getChildRightIndex(index);
+		int largest = index;
+		if(left < heapSize && arrays[largest] < arrays[left]) {
+			largest = left;
+		}
+		if(right < heapSize && arrays[largest] < arrays[right]) {
+			largest = right;
+		}
+		//得到最大值后可能需要交换，如果交换了，其子节点可能就不是最大堆了，需要重新调整
+		if(largest != index) {
+			int temp = arrays[largest];
+			arrays[largest] = arrays[index];
+			arrays[index] = temp;
+			maxHeapify(arrays, heapSize, largest);
+		}
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: heapSort   
+	 * @Description: 堆排序
+	 * 排序，最大值放在末尾，arrays虽然是最大堆，在排序后就成了递增的
+	 */
+	public static void heapSort(final int[] arrays) {
+		//末尾与头交换，交换后调整最大堆
+		for(int i=arrays.length-1; i>=0; i--) {
+			int temp = arrays[0];
+			arrays[0] = arrays[i];
+			arrays[i] = temp;
+			maxHeapify(arrays, i, 0);
+		}
+		System.out.println("堆排序:" + Arrays.toString(arrays));
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: getParentIndex   
+	 * @Description: 父节点位置   
+	 */
+	private static int getParentIndex(int current) {
+		return (current - 1) >> 1;
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: getChildLeftIndex   
+	 * @Description: 左子节点position   2 * i + 1
+	 */
+	private static int getChildLeftIndex(int current) {
+		return (current << 1) + 1;
+	}
+	
+	/**
+	 * @author: YangNan(杨楠)  
+	 * @Title: getChildRightIndex   
+	 * @Description: 右子节点position   2 * i + 2
+	 */
+	private static int getChildRightIndex(int current) {
+		return (current << 1) + 2;
 	}
 	
 }
