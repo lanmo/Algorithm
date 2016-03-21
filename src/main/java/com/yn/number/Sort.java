@@ -59,21 +59,21 @@ public class Sort {
 	 */
 	public static void quickSort(final int[] arrays, int left, int right) {
 		if(left >= right) return;
-		int first = left;
-		int last = right;
-		int key = arrays[left];/*用字表的第一个记录作为枢轴*/
-		while(first < last) {
+		int low = left;
+		int high = right;
+		int key = arrays[low];/*用字表的第一个记录作为枢轴*/
+		while(low < high) {
 			//从右边往左边查找
-			while(first < last && arrays[last] >= key) --last;
-				arrays[first] = arrays[last];/*将比第一个小的移到低端*/
+			while(low < high && arrays[high] >= key) --high;
+				arrays[low] = arrays[high];/*将比第一个小的移到低端*/
 			//从左边往右边查找
-			while(first < last && arrays[first] <= key) ++first;
-				arrays[last] = arrays[first];/*将比第一个大的移到高端*/
+			while(low < high && arrays[low] <= key) ++low;
+				arrays[high] = arrays[low];/*将比第一个大的移到高端*/
 		}
 		
-		arrays[left] = key;/*枢轴记录到位*/
-		quickSort(arrays, left, first -1);/*对左边的元素进行排序*/
-		quickSort(arrays, first+1, right);/*对右边的元素进行排序*/
+		arrays[low] = key; /*枢轴记录到位*/
+		quickSort(arrays, left, low -1);/*对左边的元素进行排序*/
+		quickSort(arrays, low+1, right);/*对右边的元素进行排序*/
 	}
 	
 	/**
