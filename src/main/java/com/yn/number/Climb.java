@@ -1,6 +1,4 @@
 package com.yn.number;
-import java.util.Scanner;
-
 /**
  * Copyright (C), nanyang205380@sohu-inc.com.
  * @ClassName: Climb   
@@ -20,16 +18,22 @@ import java.util.Scanner;
  */
 public class Climb {
 	public static void main(String[] args) {
-		String str = "10 32 32 33 33 34 34 35 35 36 36";
-		String ss = "10 2 3 2 3 2 3 2 3 2 3";
-		Scanner sc = new Scanner(System.in);
-		String str1 = sc.nextLine();
-		String str2 = sc.nextLine();
-		int arr1[] = getarr(str1);
-		int arr2[] = getarr(str2);
-		for (int i = 0; i < arr1.length; i++) {
-			System.out.println(getStepNum(arr1[i], arr2[i]) + "");
-		}
+//		String str = "10 32 32 33 33 34 34 35 35 36 36";
+//		String ss = "10 2 3 2 3 2 3 2 3 2 3";
+//		Scanner sc = new Scanner(System.in);
+//		String str1 = sc.nextLine();
+//		String str2 = sc.nextLine();
+//		int arr1[] = getarr(str1);
+//		int arr2[] = getarr(str2);
+//		for (int i = 0; i < arr1.length; i++) {
+//			System.out.println(getStepNum(arr1[i], arr2[i]) + "");
+//		}
+//
+		int s = 9;
+		System.out.println("普通算法:"+getStepNum(s,3));
+		int r = computeStemp(s);
+		System.out.println("递归:" + r);
+		test(s);
 	}
 
 	private static int[] getarr(String str) {
@@ -47,16 +51,69 @@ public class Climb {
 		if (n == 0) {
 			return 1;
 		}
-		
 		int i = 1;
 		if (n >= m) {
 			for (; i <= m; i++) {
+				//进行下一步的迭代，迭代完之后将每后加上的一步去掉，换成其它的步数(如从1换成2)
 				sumStep += getStepNum(n - i, m);
 			}
 		} else {
 			sumStep = getStepNum(n, n);
 		}
 		return sumStep;
+	}
+
+	/**
+	 *  每次可以迈1,2,3步
+	 *
+	 * @param stair 总台阶数
+     */
+	private static int computeStemp(int stair) {
+		if (stair <=0 ) {
+			return 0;
+		}
+
+		if (stair == 1) {
+			return 1;
+		}
+
+		if (stair == 2) {
+			return 2;
+		}
+
+		if (stair == 3) {
+			return 4;
+		}
+
+		return computeStemp(stair-1) + computeStemp(stair-2) + computeStemp(stair - 3);
+	}
+
+	private static void test(int n) {
+		int f1 = 1;
+		int f2 = 2;
+		int f3 = 4;
+		int result = 0;
+
+		if (n == 1) {
+			result = f1;
+		}
+
+		if (n == 2) {
+			result = f2;
+		}
+
+		if (n == 3) {
+			result = f3;
+		}
+
+		//f(n)=f(n-1)+f(n-2)+f(n-3)（n>=4）
+		for (int i=4;i <=n; i++) {
+			result = f1 + f2 + f3;
+			f1 = f2;
+			f2 = f3;
+			f3 = result;
+		}
+		System.out.println("非递归:"+result);
 	}
 
 }

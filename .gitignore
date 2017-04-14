@@ -2,3 +2,7 @@
 .project
 .settings/
 target/
+.idea/
+Algorithm.iml
+.DS_Store
+settings.xml
