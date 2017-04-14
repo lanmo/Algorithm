@@ -4,7 +4,7 @@ package com.yn.number;
  * Created by yangnan on 17/4/14.
  *
  */
-public class Integer {
+public class IntegerToString {
 
     public static void main(String[] args) {
 
