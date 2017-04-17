@@ -382,22 +382,6 @@ public class SinglyLinkList {
 		System.out.println(sb.toString());
 	}
 	
-	//打印内容
-	public static void print(Node head) {
-		if(head == null)
-			System.out.println("list is null");
-		
-		Node n = head;
-		StringBuilder sb = new StringBuilder("[");
-		while(n != null) {
-			sb.append(n.value).append(",");
-			n = n.next;
-		}
-		sb.deleteCharAt(sb.length() - 1);
-		sb.append("]");
-		System.out.println(sb.toString());
-	}
-	
 	public int size() {
 		return size;
 	}
