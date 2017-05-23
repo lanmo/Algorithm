@@ -11,11 +11,11 @@ package com.yn.number;
 public class BinarySearch {
 	
 	public static void main(String[] args) {
-		int[] array = new int[9];
-		for(int i=0; i<9; ++i) {
+		int[] array = new int[1000];
+		for(int i=0; i<array.length; ++i) {
 			array[i] = i;
 		}
-		System.out.println(binarySearch(array, 0, array.length, 6));
+		System.out.println(binarySearch(array, 0, array.length, 2));
 	}
 	
 	/**
@@ -31,7 +31,8 @@ public class BinarySearch {
 		int high = toIndex - 1;
 		
 		while (low <= high) {
-			int mid = (low + high) >>> 1;
+//			int mid = (low + high) >>> 1;
+			int mid = low + ((high - low) >>> 1);
 			int middle = sources[mid];
 			if(middle > key) {
 				high = mid - 1;
@@ -41,6 +42,6 @@ public class BinarySearch {
 				return mid;
 		}
 		
-		return 0;
+		return -1;
 	}
 }
