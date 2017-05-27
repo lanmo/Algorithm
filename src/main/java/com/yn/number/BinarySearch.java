@@ -44,4 +44,34 @@ public class BinarySearch {
 		
 		return -1;
 	}
+
+	/**
+	 * @author: YangNan(杨楠)
+	 * @date: 2015年1月29日 下午2:43:45
+	 * @Title: binarySearch
+	 * @Description: 二分法查找,如何有相等找出第一个出现的位置
+	 * @throws:
+	 */
+	public static int binarySearchEf(final int[] sources, int fromIndex, int toIndex, int key) {
+
+		int low = fromIndex;
+		int high = toIndex - 1;
+		while (low <= high) {
+			int mid = low + ((high - low) >>> 1);
+			int middle = sources[mid];
+			if(middle > key) {
+				high = mid - 1;
+			} else if(middle < key) {
+				low = mid + 1;
+			} else {
+				if (middle == 0 || key == sources[middle]) {
+					return middle;
+				}
+				high = mid - 1;
+			}
+
+		}
+
+		return -1;
+	}
 }
